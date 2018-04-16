@@ -8,6 +8,8 @@
 # CMake
 cmake-build-debug/
 
+# Swap
+*.swp
 
 ## File-based project format:
 *.iws
