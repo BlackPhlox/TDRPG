@@ -2,8 +2,7 @@ package Model.Item.Weapon.Explosive;
 
 import Model.Item.Weapon.*;
 import Model.Player;
-import Model.World;
-import View.UI;
+import Program.*;
 
 public abstract class Explosive extends Weapon
 {
@@ -14,7 +13,7 @@ public abstract class Explosive extends Weapon
 
     @Override
     public void action(Player p){
-        UI.sout(p,"Threw " + this); //Placed
+        Program.println(p,"Threw " + this); //Placed
     }
     //Trigger
 }

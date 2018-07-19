@@ -2,8 +2,7 @@ package Model.Item.Weapon.Melee;
 
 import Model.Item.Weapon.*;
 import Model.Player;
-import Model.World;
-import View.UI;
+import Program.*;
 
 public abstract class Melee extends Weapon
 {
@@ -23,6 +22,6 @@ public abstract class Melee extends Weapon
 
     @Override
     public void action(Player p){
-        UI.sout(p,"Used " + this + " to make a " + strength + " swing");
+        Program.println(p,"Used " + this + " to make a " + strength + " swing");
     }
 }

@@ -2,8 +2,7 @@ package Model.Item.Weapon.Equipment;
 
 import Model.Item.Weapon.*;
 import Model.Player;
-import Model.World;
-import View.UI;
+import Program.Program;
 
 public abstract class Equipment extends Weapon
 {
@@ -16,6 +15,6 @@ public abstract class Equipment extends Weapon
 
     @Override
     public void action(Player p){
-        UI.sout(p,"Deployed " + this);
+        Program.println(p,"Deployed " + this);
     }
 }

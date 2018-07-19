@@ -1,11 +1,10 @@
 package View;
 
+import Program.*;
 import Model.Hand;
 import Model.Item.Item;
-import Model.Item.Weapon.Firearm.Firearm;
 import Model.Player;
 import Model.Projectile.*;
-import Model.Round;
 import Model.Static.Static;
 import Model.World;
 import javafx.application.Application;
@@ -21,7 +20,6 @@ import javafx.beans.value.*;
 import javafx.scene.input.MouseEvent;
 import javafx.animation.AnimationTimer;
 
-import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -83,7 +81,7 @@ public class UI extends Application
         pane.setContent(handbox);
 
         player1 = new Player("Micheal", 200, 100,20,20);
-        player2 = new Player("James", 50, 50,20,20);
+        player2 = new Player("James", 50, 50,60,60);
         player3 = new Player("Jin", 150, 50,20,20);
 
         players.add(player1);
@@ -122,7 +120,7 @@ public class UI extends Application
 
         // JavaFX must have a Scene (window content) inside a Stage (window)
         Scene scene = new Scene(hb, 600,600);
-        stage.setTitle("Meteor Remastered");
+        stage.setTitle(Program.getFullName());
         stage.setScene(scene);
 
         // Show the Stage (window)
@@ -135,14 +133,14 @@ public class UI extends Application
             @Override
             public void handle(long now) {
                 if(currentPlayer != null) {
-                    int dx = 0,dy = 0;
-                    if (goNorth) dy -= currentPlayer.getWalkSpeed();
-                    if (goSouth) dy += currentPlayer.getWalkSpeed();
-                    if (goEast)  dx += currentPlayer.getWalkSpeed();
-                    if (goWest)  dx -= currentPlayer.getWalkSpeed();
+                    double dx = 0,dy = 0;
+                    if (goNorth) dy -= (currentPlayer.getWalkSpeed() - currentPlayer.getWalkSpeedMult()+1);
+                    if (goSouth) dy += (currentPlayer.getWalkSpeed() - currentPlayer.getWalkSpeedMult()+1);
+                    if (goEast)  dx += (currentPlayer.getWalkSpeed() - currentPlayer.getWalkSpeedMult()+1);
+                    if (goWest)  dx -= (currentPlayer.getWalkSpeed() - currentPlayer.getWalkSpeedMult()+1);
                     if (running && currentPlayer.stamina > 0 && penalty <= 0) {
-                        dx *= currentPlayer.getRunningSpeed();
-                        dy *= currentPlayer.getRunningSpeed();
+                        dx *= (currentPlayer.getRunningSpeed() - currentPlayer.getRunningSpeedMult()+1);
+                        dy *= (currentPlayer.getRunningSpeed() - currentPlayer.getRunningSpeedMult()+1);
                         if(goNorth||goEast||goSouth||goWest){
                             currentPlayer.stamina -= (currentPlayer.fatigueRate * currentPlayer.fatigueMult);
                         }
@@ -156,7 +154,6 @@ public class UI extends Application
                     currentPlayer.x += dx; currentPlayer.y += dy;
 
                     if(penalty > 0)penalty--;
-
                 }
                 draw();
             }
@@ -280,7 +277,7 @@ public class UI extends Application
         );
 
         c.addEventFilter(MouseEvent.MOUSE_PRESSED, mE -> {
-            System.out.println(mE.getButton() + " CLICK ON "
+            Program.println(mE.getButton() + " CLICK ON "
                     + mE.getSource()
                     + " AT: " + mE.getX() + " " + mE.getY());
             if (mE.isPrimaryButtonDown())   {priMouseIsPressed = true;}
@@ -358,7 +355,7 @@ public class UI extends Application
                         oldValue.setControlled(false);
                     }
                     newValue.setControlled(true);
-                    UI.sout(currentPlayer + " is selected");
+                    Program.println(currentPlayer + " is selected");
         });
 
     }
@@ -373,40 +370,6 @@ public class UI extends Application
             String s = currentPlayer.getPlayerInfo();
             inventoryContent.setText(s);
         }
-    }
-
-    private static void sout(String input){
-        System.out.println("UI: " + input);
-    }
-
-    public static double map(double n, double start1, double stop1, double start2, double stop2){
-        double newVal = (n - start1) / (stop1 - start1) * (stop2 - start2) + start2;
-        if (start2 < stop2) {
-            return constrain(newVal, start2, stop2);
-        } else {
-            return constrain(newVal, stop2, start2);
-        }
-    }
-
-    public static double constrain(double n, double low, double high){
-        return Math.max(Math.min(n, high), low);
-    }
-
-    public static class Console extends OutputStream {
-        private TextArea output;
-        public Console(TextArea ta) {
-            this.output = ta;
-        }
-
-        @Override
-        public void write(int i) throws IOException {
-            output.appendText(String.valueOf((char) i));
-        }
-    }
-
-    public static void sout(Player p,String s){
-        boolean isDebugging = true;
-        if (isDebugging) System.out.println(p + " : " + s);
     }
 
     public long millis(){

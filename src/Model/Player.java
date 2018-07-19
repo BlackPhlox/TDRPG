@@ -9,6 +9,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
+import Program.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,7 +35,8 @@ public class Player
             fatigueMult = 1,
             recoverRate = 100,
             totalWeight;
-    private double walkSpeed = 2,runningSpeed = 3;
+    private double walkSpeed = 2, walkSpeedMult = 1,
+            runningSpeed = 3, runningSpeedMult = 1;
     private Vector2D heading;
     private int selectorIndex;
     public Player(String name, double x, double y, double w, double h)
@@ -47,7 +49,7 @@ public class Player
         outfit = new HashMap<>();
         heading = new Vector2D(0,0);
         setTotalWeight();
-        UI.sout(this, "Spawned at (x:" + x + " y:"+y+")");
+        Program.println(this, "Spawned at (x:" + x + " y:"+y+")");
     }
 
     //Movement methods
@@ -56,7 +58,7 @@ public class Player
     double getY(){return y;}
 
     public void clothe(ClothingType ct, Clothes c){
-        UI.sout(this,"Putting " + c + " on " + ct);
+        Program.println(this,"Putting " + c + " on " + ct);
         if(ct == c.type){
             if(outfit.get(ct) != null) inventory.add(outfit.get(ct));
             outfit.put(ct,c);
@@ -68,7 +70,7 @@ public class Player
                 removeItem(c);
             }
         } else {
-            UI.sout(this,"Can't use this type of clothes here");
+            Program.println(this,"Can't use this type of clothes here");
         }
     }
 
@@ -86,19 +88,19 @@ public class Player
     }
 
     public void addItem(Item i){
-        UI.sout(this,"Added " + i + " to inventory");
+        Program.println(this,"Added " + i + " to inventory");
         inventory.add(i);
         setTotalWeight();
     }
 
     public void removeItem(Item i){
-        UI.sout(this,"Removed " + i + " to inventory");
+        Program.println(this,"Removed " + i + " to inventory");
         inventory.remove(i);
         setTotalWeight();
     }
 
     public void removeItem(int i){
-        UI.sout(this,"Removed " + inventory.get(i) + " to inventory");
+        Program.println(this,"Removed " + inventory.get(i) + " to inventory");
         inventory.remove(i);
         setTotalWeight();
     }
@@ -108,7 +110,7 @@ public class Player
             for(Item i : items){
                 //DEBUG System.out.println(x + " " + i.getX() + " = " + (x - i.getX()) );
                 if(x - i.getX() < 20 && x - i.getX() >= 0 && y-i.getY() < 20 && y-i.getY() >= 0){
-                    UI.sout(this,"Picked up a " + i);
+                    Program.println(this,"Picked up a " + i);
                     items.remove(i);
                     addItem(i);
                     break;
@@ -132,6 +134,18 @@ public class Player
         //TODO Improve stamina reduction function
         //See GeoGebra Sketch
         setFatigueMult(Math.pow(totalWeight,2)/bodyWeight+1);
+
+        double temp = totalWeight/bodyWeight+1;
+        setWalkSpeedMult(temp);
+        setRunningSpeedMult(temp);
+    }
+
+    public void setRunningSpeedMult(double runningSpeedMult) {
+        this.runningSpeedMult = runningSpeedMult;
+    }
+
+    public void setWalkSpeedMult(double walkSpeedMult) {
+        this.walkSpeedMult = walkSpeedMult;
     }
 
     public Item getItem(int i){
@@ -139,7 +153,7 @@ public class Player
         try{
             it = inventory.get(i);
         } catch(IndexOutOfBoundsException e){
-            UI.sout(this,"Item in inventory with index: "+ i +" not found");
+            Program.println(this,"Item in inventory with index: "+ i +" not found");
             return null;
         }
         return it;
@@ -155,16 +169,16 @@ public class Player
 
     public void equip(Item i, Hand h){
         if(i != null){
-            UI.sout(this,"Is equipping " + i + " in the " + h + " hand");
+            Program.println(this,"Is equipping " + i + " in the " + h + " hand");
             if(i.isTwoHanded){
-                UI.sout(this,"Is equipping a two-handed item");
+                Program.println(this,"Is equipping a two-handed item");
                 switch(h){
                     case RIGHT: equipHand(i,Hand.RIGHT); equipHand(null,Hand.LEFT); break;
                     case LEFT:  equipHand(i,Hand.LEFT); equipHand(null,Hand.RIGHT); break;
                 }
                 removeItem(i);
             } else {
-                UI.sout(this,"Is equipping a non-two-handed item");
+                Program.println(this,"Is equipping a non-two-handed item");
                 switch(h){
                     case RIGHT:
                         equipHand(i,Hand.RIGHT);
@@ -181,12 +195,12 @@ public class Player
                     default:
                         equipHand(null,Hand.RIGHT);
                         equipHand(null,Hand.LEFT);
-                        UI.sout(this,"Hand not defined");
+                        Program.println(this,"Hand not defined");
                         break;
                 }
             }
         } else {
-            UI.sout(this,"No item found to be equipped");
+            Program.println(this,"No item found to be equipped");
         }
     }
 
@@ -194,18 +208,18 @@ public class Player
         switch(h){
             case LEFT:
                 if(leftHand != null){
-                    UI.sout(this,"Moved " + leftHand + " back to inventory");
+                    Program.println(this,"Moved " + leftHand + " back to inventory");
                     inventory.add(leftHand);
                 }
-                UI.sout(this,"Equipped " + i + " in left hand");
+                Program.println(this,"Equipped " + i + " in left hand");
                 leftHand = i;
                 break;
             case RIGHT:
                 if(rightHand != null){
-                   UI.sout(this,"Moved " + rightHand + " back to inventory");
+                   Program.println(this,"Moved " + rightHand + " back to inventory");
                    inventory.add(rightHand);
                 }
-                UI.sout(this,"Equipped " + i + " in right hand");
+                Program.println(this,"Equipped " + i + " in right hand");
                 rightHand = i;
                 break;
         }
@@ -213,22 +227,22 @@ public class Player
     }
 
     public void dropItem(int i){
-        UI.sout(this,"Dropping item");
+        Program.println(this,"Dropping item");
         if(i >= 0) {
             if (inventory.size()-1 < i) {
-                UI.sout(this,i+"");
+                Program.println(this,i+"");
                 int index = 0;
                 for (Map.Entry<ClothingType, Clothes> entry : outfit.entrySet()) {
                     if (inventory.size()-1 + index == i) {
                         outfit.replace(entry.getKey(), null);
-                        UI.sout(this,"Drops " + entry.getValue());
+                        Program.println(this,"Drops " + entry.getValue());
                         break;
                     }
                     index++;
                 }
             } else {
                 if(inventory.size() > 0){
-                    UI.sout(this, "Dropped " + inventory.get(i));
+                    Program.println(this, "Dropped " + inventory.get(i));
                     inventory.get(i).setX(x);
                     inventory.get(i).setY(y);
                     UI.getItems().add(inventory.get(i));
@@ -237,24 +251,24 @@ public class Player
                         selectorIndex = -1;
                     }
                 } else {
-                    UI.sout(this, "Inventory is empty");
+                    Program.println(this, "Inventory is empty");
                 }
 
             }
         } else if (i == -1){
             if(rightHand != null){
                 dropFromHand(Hand.RIGHT);
-            } else UI.sout(this,"Right hand is empty");
+            } else Program.println(this,"Right hand is empty");
         } else if (i == -2){
             if(leftHand != null){
                 dropFromHand(Hand.LEFT);
-            } else UI.sout(this,"Left hand is empty");
+            } else Program.println(this,"Left hand is empty");
         }
         setTotalWeight();
     }
 
     private void dropFromHand(Hand h){
-        UI.sout(this,"Dropped " + h.toString().toLowerCase());
+        Program.println(this,"Dropped " + h.toString().toLowerCase());
         if(h == Hand.RIGHT){
             rightHand.setX(x);rightHand.setY(y);
             UI.getItems().add(rightHand);
@@ -271,7 +285,7 @@ public class Player
             if(i == -1) if(rightHand != null) rightHand.action(this);
             if(i == -2) if(leftHand != null)  leftHand.action(this);
         } else if (i > inventory.size()-1){
-            UI.sout(this,"Clothes only have put on as an action");
+            Program.println(this,"Clothes only have put on as an action");
         } else {
             inventory.get(i).action(this);
         }
@@ -280,28 +294,28 @@ public class Player
     public void action(Hand h){
         switch(h){
             case RIGHT:
-                UI.sout(this,"Took action in his right hand");
+                Program.println(this,"Took action in his right hand");
                 if (rightHand != null){
                     rightHand.action(this);
                 } else {
-                    UI.sout(this,"There is no item in your right hand");
+                    Program.println(this,"There is no item in your right hand");
                 }
                 break;
 
             case LEFT:
-                UI.sout(this,"Took action in his left hand");
+                Program.println(this,"Took action in his left hand");
                 if (leftHand != null){
                     leftHand.action(this);
                 } else {
-                    UI.sout(this,"There is no item in your left hand");
+                    Program.println(this,"There is no item in your left hand");
                 }
                 break;
         }
     }
 
     void showHands(){
-        UI.sout(this,"Showing hands:");
-        UI.sout(this,"L: " + leftHand + " R: " + rightHand);
+        Program.println(this,"Showing hands:");
+        Program.println(this,"L: " + leftHand + " R: " + rightHand);
     }
 
     public String getHand(Hand h){
@@ -346,26 +360,26 @@ public class Player
     }
 
     void showInventory(){
-        UI.sout(this,"Showing inventory:");
+        Program.println(this,"Showing inventory:");
         int index = 0;
         for(Item i : inventory){
-            UI.sout(this,""+(index++)+". "+i);
+            Program.println(this,""+(index++)+". "+i);
         }
         if(index == 0){
-            UI.sout(this,"Inventory is empty");
+            Program.println(this,"Inventory is empty");
         }
     }
 
     void showAttachments(Firearm f){
-        UI.sout(this,"Showing " + f +"'s attachments:");
+        Program.println(this,"Showing " + f +"'s attachments:");
         f.showAttachments(this);
     }
 
     void showClothing(){
-        UI.sout(this,"Showing clothes:");
+        Program.println(this,"Showing clothes:");
         int index = 0;
         for (Map.Entry<ClothingType, Clothes> entry : outfit.entrySet()) {
-            UI.sout(this,""+(index++)+". "+ entry.getKey() + " | " + entry.getValue());
+            Program.println(this,""+(index++)+". "+ entry.getKey() + " | " + entry.getValue());
         }
     }
 
@@ -390,20 +404,20 @@ public class Player
         s.append("Stamina: "+ stamina);       s.append("\n");
         s.append("Penalty: "+ UI.penalty +" Res:"+ restitutionRate+" Fa:"+fatigueRate+ "FaMult:"+fatigueMult+" Rec:"+recoverRate);    s.append("\n");
         s.append("Inv i: "  + selectorIndex); s.append("\n");
-        s.append("Walk Sp: "+ walkSpeed);     s.append("\n");
-        s.append("Run Sp: " + runningSpeed);  s.append("\n");
+        s.append("Walk Sp: "+ walkSpeed + " (" + walkSpeedMult + ") " + (walkSpeed-walkSpeedMult+1));     s.append("\n");
+        s.append("Run Sp: " + runningSpeed + " (" + runningSpeedMult + ") " + (runningSpeed-runningSpeedMult+1));  s.append("\n");
         s.append("Heading: "+ getHeading());
         return s.toString();
     }
 
     void getItemTree(Item i){
-        UI.sout(this,"Showing item-tree of " + i + " :");
+        Program.println(this,"Showing item-tree of " + i + " :");
         Class C = i.getClass();
         while (C != null) {
-            UI.sout(this,C.getSimpleName());
+            Program.println(this,C.getSimpleName());
             C = C.getSuperclass();
             if(C != null){
-                UI.sout(this, "/\\");
+                Program.println(this, "/\\");
             }
         }
     }
@@ -414,15 +428,15 @@ public class Player
             if(isControlled){
                 gc.translate(canvas.getWidth()/2,canvas.getHeight()/2);
                 gc.save();
-                    gc.translate(-20,-30);
+                    gc.translate(-20,-h - 10);
                     gc.setFill(Color.RED);
-                    gc.fillRect(0,0,UI.map(health,0,maxHealth,0,40),5);      //HEALTH
+                    gc.fillRect(0,0,Program.map(health,0,maxHealth,0,40),5);      //HEALTH
                     gc.strokeRect(0,0,40,5);
                     gc.setFill(Color.BLUE);
-                    gc.fillRect(0,5,UI.map(armour,0,maxArmour,0,40),5);      //ARMOUR
+                    gc.fillRect(0,5,Program.map(armour,0,maxArmour,0,40),5);      //ARMOUR
                     gc.strokeRect(0,5,40,5);
                     gc.setFill(Color.YELLOW);
-                    gc.fillRect(0,10,UI.map(stamina,0,maxStamina,0,40),5);//STAMINA
+                    gc.fillRect(0,10,Program.map(stamina,0,maxStamina,0,40),5);//STAMINA
                     gc.strokeRect(0,10,40,5);
                 gc.restore();
                 Vector2D playerVector = new Vector2D(canvas.getWidth()/2,canvas.getHeight()/2);
@@ -455,12 +469,12 @@ public class Player
         if(s.contains("UP")) {
             if(selectorIndex > -2){
                 selectorIndex -= 1;
-                UI.sout(this,"Selector index: "+selectorIndex);
+                Program.println(this,"Selector index: "+selectorIndex);
             }
         } else {
             if(selectorIndex < inventory.size()-1+outfit.size()) {
                 selectorIndex += 1;
-                UI.sout(this,"Selector index: "+selectorIndex);
+                Program.println(this,"Selector index: "+selectorIndex);
             }
         }
     }
@@ -516,5 +530,17 @@ public class Player
 
     public void setFatigueRate(double fatigueRate) {
         this.fatigueRate = fatigueRate;
+    }
+
+    public double getFatigueMult() {
+        return fatigueMult;
+    }
+
+    public double getWalkSpeedMult() {
+        return walkSpeedMult;
+    }
+
+    public double getRunningSpeedMult() {
+        return runningSpeedMult;
     }
 }
