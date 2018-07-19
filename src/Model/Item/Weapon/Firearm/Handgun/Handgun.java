@@ -4,10 +4,10 @@ import Model.Item.Weapon.Firearm.*;
 
 public abstract class Handgun extends Firearm
 {
-    public Handgun(){
-        super();
+    public Handgun(double weight){
+        super(weight);
     }
-    public Handgun(double x, double y) {
-        super(x, y);
+    public Handgun(double weight, double x, double y) {
+        super(weight, x, y);
     }
 }

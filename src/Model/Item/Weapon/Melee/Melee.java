@@ -9,12 +9,12 @@ public abstract class Melee extends Weapon
 {
     String strength = "heavy";
 
-    protected Melee(){
-        super();
+    protected Melee(double weight){
+        super(weight);
     }
 
-    protected Melee(double x, double y) {
-        super(x, y);
+    protected Melee(double weight, double x, double y) {
+        super(weight, x, y);
     }
 
     public void lightSwing(){}

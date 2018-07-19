@@ -27,7 +27,13 @@ public class Player
     public double bodyWeight = 80;
     private double health, maxHealth = 100;
     private double armour, maxArmour = 100;
-    public double stamina, maxStamina = 100, restitutionRate = 1, fatigueRate = 2, recoverRate = 100,totalWeight;//TODO: Implement weight, changes movementspeed
+    public double stamina,
+            maxStamina = 100,
+            restitutionRate = 1,
+            fatigueRate = 2,
+            fatigueMult = 1,
+            recoverRate = 100,
+            totalWeight;
     private double walkSpeed = 2,runningSpeed = 3;
     private Vector2D heading;
     private int selectorIndex;
@@ -40,6 +46,7 @@ public class Player
         inventory = new ArrayList<>();
         outfit = new HashMap<>();
         heading = new Vector2D(0,0);
+        setTotalWeight();
         UI.sout(this, "Spawned at (x:" + x + " y:"+y+")");
     }
 
@@ -58,7 +65,7 @@ public class Player
             } else if(rightHand == c){
                 rightHand = null;
             } else {
-                inventory.remove(c);
+                removeItem(c);
             }
         } else {
             UI.sout(this,"Can't use this type of clothes here");
@@ -71,7 +78,7 @@ public class Player
 
     public void addAttachment(Attachment a, Firearm f, AttachmentPoint ap){
         f.addAttachment(this,ap,a);
-        inventory.remove(a);
+        removeItem(a);
     }
 
     public void removeAttachment(Firearm f,AttachmentPoint ap){
@@ -81,6 +88,19 @@ public class Player
     public void addItem(Item i){
         UI.sout(this,"Added " + i + " to inventory");
         inventory.add(i);
+        setTotalWeight();
+    }
+
+    public void removeItem(Item i){
+        UI.sout(this,"Removed " + i + " to inventory");
+        inventory.remove(i);
+        setTotalWeight();
+    }
+
+    public void removeItem(int i){
+        UI.sout(this,"Removed " + inventory.get(i) + " to inventory");
+        inventory.remove(i);
+        setTotalWeight();
     }
 
     public void pickupItem(List<Item> items){
@@ -95,6 +115,23 @@ public class Player
                 }
             }
         }
+    }
+
+    public void setFatigueMult(double fatigueMult) {
+        this.fatigueMult = fatigueMult;
+    }
+
+    public void setTotalWeight(){
+        double weightSum = 0;
+        for(Item i : inventory){
+            weightSum += i.getWeight();
+        }
+        if(leftHand != null) weightSum += leftHand.getWeight();
+        if(rightHand != null) weightSum += rightHand.getWeight();
+        totalWeight = weightSum;
+        //TODO Improve stamina reduction function
+        //See GeoGebra Sketch
+        setFatigueMult(Math.pow(totalWeight,2)/bodyWeight+1);
     }
 
     public Item getItem(int i){
@@ -125,7 +162,7 @@ public class Player
                     case RIGHT: equipHand(i,Hand.RIGHT); equipHand(null,Hand.LEFT); break;
                     case LEFT:  equipHand(i,Hand.LEFT); equipHand(null,Hand.RIGHT); break;
                 }
-                inventory.remove(i);
+                removeItem(i);
             } else {
                 UI.sout(this,"Is equipping a non-two-handed item");
                 switch(h){
@@ -172,14 +209,14 @@ public class Player
                 rightHand = i;
                 break;
         }
-        inventory.remove(i);
+        removeItem(i);
     }
 
     public void dropItem(int i){
         UI.sout(this,"Dropping item");
         if(i >= 0) {
             if (inventory.size()-1 < i) {
-                UI.sout(this,i+"");//TODO: FIX THIS, NPE
+                UI.sout(this,i+"");
                 int index = 0;
                 for (Map.Entry<ClothingType, Clothes> entry : outfit.entrySet()) {
                     if (inventory.size()-1 + index == i) {
@@ -195,7 +232,7 @@ public class Player
                     inventory.get(i).setX(x);
                     inventory.get(i).setY(y);
                     UI.getItems().add(inventory.get(i));
-                    inventory.remove(i);
+                    removeItem(i);
                     if (inventory.size() == 0) {
                         selectorIndex = -1;
                     }
@@ -213,6 +250,7 @@ public class Player
                 dropFromHand(Hand.LEFT);
             } else UI.sout(this,"Left hand is empty");
         }
+        setTotalWeight();
     }
 
     private void dropFromHand(Hand h){
@@ -233,7 +271,7 @@ public class Player
             if(i == -1) if(rightHand != null) rightHand.action(this);
             if(i == -2) if(leftHand != null)  leftHand.action(this);
         } else if (i > inventory.size()-1){
-            UI.sout(this,"Clothes only have put on as an action"); //TODO: FIX
+            UI.sout(this,"Clothes only have put on as an action");
         } else {
             inventory.get(i).action(this);
         }
@@ -350,7 +388,7 @@ public class Player
         s.append("Health:  "+ health);        s.append("\n");
         s.append("Armour:  "+ armour);        s.append("\n");
         s.append("Stamina: "+ stamina);       s.append("\n");
-        s.append("Penalty: "+ UI.penalty +" Res:"+ restitutionRate+" Fa:"+fatigueRate+" Rec:"+recoverRate);    s.append("\n");
+        s.append("Penalty: "+ UI.penalty +" Res:"+ restitutionRate+" Fa:"+fatigueRate+ "FaMult:"+fatigueMult+" Rec:"+recoverRate);    s.append("\n");
         s.append("Inv i: "  + selectorIndex); s.append("\n");
         s.append("Walk Sp: "+ walkSpeed);     s.append("\n");
         s.append("Run Sp: " + runningSpeed);  s.append("\n");
@@ -439,7 +477,13 @@ public class Player
         s.append("\n");
         s.append(getClothing());
         s.append(getStats());
+        s.append("\n");
+        s.append(getTotalWeight());
         return s.toString();
+    }
+
+    private String getTotalWeight() {
+        return "Total weight: " + totalWeight;
     }
 
     public int getSelectorIndex(){
@@ -470,4 +514,7 @@ public class Player
         return runningSpeed;
     }
 
+    public void setFatigueRate(double fatigueRate) {
+        this.fatigueRate = fatigueRate;
+    }
 }

@@ -5,15 +5,15 @@ import Model.Player;
 import Model.World;
 import View.UI;
 
-public abstract class Launcher extends Weapon
+public class Launcher extends Weapon
 {
-    protected Launcher(){
-        super();
+    protected Launcher(double weight){
+        super(weight);
         isTwoHanded = true;
     }
 
-    protected Launcher(double x, double y) {
-        super(x, y);
+    protected Launcher(double weight, double x, double y) {
+        super(weight, x, y);
         isTwoHanded = true;
     }
 

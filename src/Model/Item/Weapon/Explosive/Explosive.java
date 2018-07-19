@@ -7,9 +7,9 @@ import View.UI;
 
 public abstract class Explosive extends Weapon
 {
-    public Explosive(){super();}
-    protected Explosive(double x, double y) {
-        super(x, y);
+    public Explosive(double weight){super(weight);}
+    protected Explosive(double weight,double x, double y) {
+        super(weight,x, y);
     }
 
     @Override

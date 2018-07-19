@@ -8,8 +8,8 @@ public abstract class Clothes extends Item
 {
     public ClothingType type;
 
-    protected Clothes(){
-        super();
+    protected Clothes(double weight){
+        super(weight);
     }
 
     @Override

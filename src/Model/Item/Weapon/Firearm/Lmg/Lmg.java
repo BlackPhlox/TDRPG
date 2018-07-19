@@ -4,13 +4,13 @@ import Model.Item.Weapon.Firearm.*;
 
 public abstract class Lmg extends Firearm {
 
-    public Lmg(){
-        super();
+    public Lmg(double weight){
+        super(weight);
         isTwoHanded = true;
     }
 
-    public Lmg(double x, double y) {
-        super(x, y);
+    public Lmg(double weight, double x, double y) {
+        super(weight, x, y);
         isTwoHanded = true;
     }
 }

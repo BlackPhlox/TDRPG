@@ -4,13 +4,13 @@ import Model.Item.Weapon.Firearm.*;
 
 abstract class Rifle extends Firearm{
 
-    Rifle(){
-        super();
+    Rifle(double weight){
+        super(weight);
         isTwoHanded = true;
     }
 
-    Rifle(double x, double y){
-        super(x,y);
+    Rifle(double weight, double x, double y){
+        super(weight, x,y);
         isTwoHanded = true;
     }
 }

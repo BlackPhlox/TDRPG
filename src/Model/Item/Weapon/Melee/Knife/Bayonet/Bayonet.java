@@ -5,11 +5,11 @@ import Model.Item.Weapon.Melee.Knife.*;
 public abstract class Bayonet extends Knife
 {
 
-    public Bayonet(){
-        super();
+    public Bayonet(double weight){
+        super(weight);
     }
 
-    public Bayonet(double x, double y) {
-        super(x,y);
+    public Bayonet(double weight, double x, double y) {
+        super(weight, x,y);
     }
 }

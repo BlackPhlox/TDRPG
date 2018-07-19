@@ -5,7 +5,8 @@ import Model.Item.Clothes.*;
 
 public abstract class Torso extends Clothes
 {
-    public Torso(){
+    public Torso(double weight){
+        super(weight);
         type = ClothingType.TORSO;
         super.addType();
     }

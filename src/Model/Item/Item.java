@@ -10,17 +10,19 @@ import java.util.List;
 public abstract class Item
 {
     private double x,y;
+    private double weight;
     public boolean isTwoHanded; //private?
     protected List<String> options = new ArrayList<>();
     //Make this method abstract
     public void action(Player p){}
 
-    public Item(){
-        this(0,0);
+    public Item(double weight){
+        this(weight,0,0);
     }
 
-    public Item(double x, double y){
+    public Item(double weight, double x, double y){
         this.x = x; this.y = y;
+        this.weight = weight;
         options.add("Equip Right");
         options.add("Equip Left");
         options.add("Drop");
@@ -55,8 +57,9 @@ public abstract class Item
 
     @Override
     public String toString(){
-
-        return this.getClass().getSimpleName().toString().replace("class ","");
+        return this.getClass()
+                .getSimpleName()
+                .replace("class ","") + " " + weight;
     }
 
     public String getOptions(int index){
@@ -69,5 +72,9 @@ public abstract class Item
             s.append(options.get(i));
         }
         return this + s.toString();
+    }
+
+    public double getWeight(){
+        return weight;
     }
 }

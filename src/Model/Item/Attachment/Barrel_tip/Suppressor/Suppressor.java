@@ -2,13 +2,14 @@ package Model.Item.Attachment.Barrel_tip.Suppressor;
 
 import Model.Item.Attachment.Barrel_tip.*;
 
-abstract class Suppressor extends Barrel_tip
+public class Suppressor extends Barrel_tip
 {
-    Suppressor(){
-        super();
+    //TODO Add which barrel the suppressor can fit onto
+    public Suppressor(double weight){
+        super(weight);
     }
 
-    Suppressor(double x, double y){
-        super(x,y);
+    public Suppressor(double weight, double x, double y){
+        super(weight, x,y);
     }
 }

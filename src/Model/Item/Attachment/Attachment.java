@@ -10,11 +10,11 @@ public abstract class Attachment extends Item
 {
     protected AttachmentPoint point;
 
-    protected Attachment(){
-        super();
+    protected Attachment(double weight){
+        super(weight);
     }
-    protected Attachment(double x, double y){
-        super(x,y);
+    protected Attachment(double weight, double x, double y){
+        super(weight, x,y);
     }
 
     @Override

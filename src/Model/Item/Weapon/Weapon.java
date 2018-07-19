@@ -4,11 +4,11 @@ import Model.Item.*;
 
 public abstract class Weapon extends Item
 {
-    protected Weapon(){
-        super();
+    protected Weapon(double weight){
+        super(weight);
     }
-    protected Weapon(double x, double y){
-        super(x,y);
+    protected Weapon(double weight, double x, double y){
+        super(weight,x,y);
     }
     int ammo_capacity;
 }

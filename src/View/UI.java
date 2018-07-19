@@ -6,6 +6,7 @@ import Model.Item.Weapon.Firearm.Firearm;
 import Model.Player;
 import Model.Projectile.*;
 import Model.Round;
+import Model.Static.Static;
 import Model.World;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -48,6 +49,7 @@ public class UI extends Application
     private static List<Player> players = new ArrayList<>();
     private static List<Item> items = new ArrayList<>();
     private static List<Projectile> projectiles = new ArrayList<>();
+    private static List<Static> statics = new ArrayList<>();
 
     //Other
     private long programStart;
@@ -142,7 +144,7 @@ public class UI extends Application
                         dx *= currentPlayer.getRunningSpeed();
                         dy *= currentPlayer.getRunningSpeed();
                         if(goNorth||goEast||goSouth||goWest){
-                            currentPlayer.stamina -= currentPlayer.fatigueRate;
+                            currentPlayer.stamina -= (currentPlayer.fatigueRate * currentPlayer.fatigueMult);
                         }
                     }
                     if(currentPlayer.stamina <= 0){
@@ -164,7 +166,7 @@ public class UI extends Application
         canvas.setWidth(400);
         canvas.setHeight(600);
 
-        World.init(players,items);
+        World.init(players,items, statics);
     }
 
     private Image img = new Image("View/background.png");
@@ -176,22 +178,13 @@ public class UI extends Application
 
         //Draw background
         gc.save();
-        if(currentPlayer != null){
-           gc.translate(canvas.getWidth()/2-currentPlayer.x,canvas.getHeight()/2-currentPlayer.y);
-        }
-        gc.drawImage(img,0,0);
+        drawBackground();
 
-        //Draw items on background
-        if(currentPlayer != null) {
-            for(Player p : players) {
-                if (p != currentPlayer) {
-                    gc = p.update(gc, canvas);
-                }
-            }
-        }
-        for(Item i : items){
-            gc = i.update(gc);
-        }
+        drawPlayers();
+
+        drawStatics();
+
+        drawItems();
 
         if(currentPlayer != null) {
             if (priMouseIsPressed) {
@@ -202,31 +195,69 @@ public class UI extends Application
             }
         }
 
+        drawProjectiles();
+
+        gc.restore();
+
+        drawCurrentPlayer();
+
+        drawCrosshair();
+
+        //Update UI-information-text
+        updateText();
+    }
+
+    private void drawBackground(){
+        if(currentPlayer != null){
+            gc.translate(canvas.getWidth()/2-currentPlayer.x,canvas.getHeight()/2-currentPlayer.y);
+        }
+        gc.drawImage(img,0,0);
+    }
+
+    private void drawPlayers() {
+        if(currentPlayer != null) {
+            for(Player p : players) {
+                if (p != currentPlayer) {
+                    gc = p.update(gc, canvas);
+                }
+            }
+        }
+    }
+
+    private void drawStatics() {
+        for(Static s: statics){
+            gc = s.update(gc);
+        }
+    }
+
+    private void drawItems() {
+        for(Item i : items){
+            gc = i.update(gc);
+        }
+    }
+
+    private void drawProjectiles() {
         for(int i = 0; i < projectiles.size(); i++){
             if(projectiles.get(i).position.x < 0 || projectiles.get(i).position.y < 0 || projectiles.get(i).position.x > img.getWidth() || projectiles.get(i).position.y > img.getHeight()) {
-                //sout(currentPlayer,projectiles.get(i) + "Is out of bounds");
                 projectiles.remove(i);
             } else {
                 gc = projectiles.get(i).update(gc);
             }
         }
+    }
 
-        gc.restore();
-
-        //Draw Static
+    private void drawCurrentPlayer() {
         if(currentPlayer != null) {
             gc = currentPlayer.update(gc, canvas);
         }
+    }
 
-        //Draw Crosshair
+    private void drawCrosshair() {
         gc.strokeOval(mouseX-10,mouseY-10,20,20);
         if(secMouseIsPressed){
             gc.strokeLine(mouseX-10,mouseY,mouseX+10,mouseY);
             gc.strokeLine(mouseX,mouseY-10,mouseX,mouseY+10);
         }
-
-        //Update UI-information-text
-        updateText();
     }
 
     private void addEventsToCanvas(Canvas c){
@@ -338,9 +369,9 @@ public class UI extends Application
     public static List<Item> getItems(){return items;}
 
     private void updateText(){
-        if (currentPlayer != null){//TODO: Make selector visable for left and right hand
+        if (currentPlayer != null){
             String s = currentPlayer.getPlayerInfo();
-            inventoryContent.setText(s.toString());
+            inventoryContent.setText(s);
         }
     }
 

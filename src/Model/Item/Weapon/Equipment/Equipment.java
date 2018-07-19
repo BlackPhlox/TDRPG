@@ -7,11 +7,11 @@ import View.UI;
 
 public abstract class Equipment extends Weapon
 {
-    protected Equipment(){
-        super();
+    protected Equipment(double weight){
+        super(weight);
     }
-    protected Equipment(double x, double y) {
-        super(x, y);
+    protected Equipment(double weight,double x, double y) {
+        super(weight, x, y);
     }
 
     @Override

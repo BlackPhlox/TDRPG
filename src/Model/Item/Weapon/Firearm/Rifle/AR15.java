@@ -4,12 +4,13 @@ import Model.Round;
 
 public class AR15 extends Rifle {
 
-    public AR15(){
+    public AR15(double weight){
+        super(weight);
         this.roundType = Round._5_56;
     }
 
-    public AR15(double x, double y){
-        super(x,y);
+    public AR15(double weight,double x, double y){
+        super(weight, x,y);
         this.roundType = Round._5_56;
     }
 

@@ -17,13 +17,13 @@ public abstract class Firearm extends Weapon
     private Map<AttachmentPoint,Attachment> attachments;
     protected Round roundType;
 
-    protected Firearm(){
-        super();
+    protected Firearm(double weight){
+        super(weight);
         attachments = new HashMap<>();
     }
 
-    protected Firearm(double x, double y){
-        super(x,y);
+    protected Firearm(double weight, double x, double y){
+        super(weight, x,y);
         attachments = new HashMap<>();
     }
 
