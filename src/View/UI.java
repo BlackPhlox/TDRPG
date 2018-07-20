@@ -8,11 +8,19 @@ import Model.Projectile.*;
 import Model.Static.Static;
 import Model.World;
 import javafx.application.Application;
+import javafx.geometry.Rectangle2D;
+import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.geometry.Insets;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
+import javafx.scene.shape.Shape;
 import javafx.stage.Stage;
 import javafx.scene.*;
 import javafx.scene.canvas.*;
@@ -20,6 +28,7 @@ import javafx.beans.value.*;
 import javafx.scene.input.MouseEvent;
 import javafx.animation.AnimationTimer;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -167,6 +176,7 @@ public class UI extends Application
     }
 
     private Image img = new Image("View/background.png");
+
     public static long frameCount = 0;
     private void draw(){
         frameCount++;

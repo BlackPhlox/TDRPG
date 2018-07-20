@@ -3,9 +3,11 @@ package Model.Projectile;
 import Model.Round;
 import Model.Vector2D;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
 
 
-public class Projectile {
+public class Projectile extends Rectangle {
     public Vector2D position, velocity;
     public Round projectileType;
 
